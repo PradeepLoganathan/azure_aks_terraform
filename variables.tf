@@ -32,23 +32,37 @@ variable "max_pods_per_node" {
 }
 
 #system node pool settings
-variable "system_node_pool_node_count" {
-  type        = string
-  default     = 2
-  description = "Number of nodes which exists in system node pool"
+
+variable "system_node_pool" {
+  description = "The object to configure the default system node pool with number of worker nodes, worker node VM size and Availability Zones."
+  type = object({
+    name                           = string
+    node_count                     = number 
+    vm_size                        = string
+    zones                          = list(string)
+    labels                         = map(string)
+    taints                         = list(string)
+    cluster_auto_scaling           = bool
+    cluster_auto_scaling_min_count = number
+    cluster_auto_scaling_max_count = number
+  })
+
+  default = {
+      node_count                        = 2
+      vm_size                           = "Standard_D2s_v3"
+      cluster_auto_scaling_min_count    = 3
+      cluster_auto_scaling_max_count    = 5
+      cluster_auto_scaling              = true
+      labels                            = {}
+      name                              = "system-node-pool"
+      taints                            = ["CriticalAddonsOnly=true:NoSchedule"]
+      zones                             = ["1", "2"]
+  }
 }
 
-variable "system_node_pool_vm_size" {
-  type        = string
-  default     = "Standard_D2s_v3"
-  description = "The size of each VM in the Agent Pool (e.g. Standard_F1). Changing this forces a new resource to be created."
-}
-
-
-variable "system_node_pool_os_disk_size" {
-  type        = string
-  default     = "120"
-  description = "The Agent Operating System disk size in GB. Changing this forces a new resource to be created."
+variable log_analytics_workspace_name {
+    description = "The name of the Log Analytics workspace."
+    default     = "aksmonitor"
 }
 
 #user node pool settings
@@ -81,3 +95,27 @@ variable "sku_tier" {
   default     = "Free"
   description = "The SKU Tier that should be used for this Kubernetes Cluster. Possible values are Free and Paid (which includes the Uptime SLA)"
 }
+
+variable "vnet_subnet_id" {
+  description = "Resource id of the Virtual Network subnet"
+  type        = string
+}
+
+variable "service_cidr" {
+  type        = string
+  default     = "100.64.0.0/16"
+  description = "The Network Range used by the Kubernetes service. This range should not be used by any network element on or connected to this virtual network. Service address CIDR must be smaller than /12."
+}
+
+variable "dns_service_ip" {
+  type        = string
+  default     = "100.64.0.10"
+  description = "IP address within the Kubernetes service address range that will be used by cluster service discovery (kube-dns). Don't use the first IP address in your address range, such as .1. The first address in your subnet range is used for the kubernetes.default.svc.cluster.local address. Changing this forces a new resource to be created."
+}
+
+variable "docker_cidr" {
+  type        = string
+  default     = "100.65.0.1/16"
+  description = "IP address (in CIDR notation) used as the Docker bridge IP address on nodes. Changing this forces a new resource to be created."
+}
+

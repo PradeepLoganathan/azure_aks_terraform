@@ -60,34 +60,24 @@ variable "system_node_pool" {
   }
 }
 
+variable "additional_node_pools" {
+  description = "The map object to configure one or several additional node pools with number of worker nodes, worker node VM size and Availability Zones."
+  type = map(object({
+    node_count                     = number
+    vm_size                        = string
+    zones                          = list(string)
+    labels                         = map(string)
+    taints                         = list(string)
+    node_os                        = string
+    cluster_auto_scaling           = bool
+    cluster_auto_scaling_min_count = number
+    cluster_auto_scaling_max_count = number
+  }))
+}
+
 variable log_analytics_workspace_name {
     description = "The name of the Log Analytics workspace."
     default     = "aksmonitor"
-}
-
-#user node pool settings
-variable "user_node_pool_min_count" {
-  type        = string
-  default     = 3
-  description = "Minimum number of nodes for auto-scaling"
-}
-
-variable "user_node_pool_max_count" {
-  type        = string
-  default     = 5
-  description = "Maximum number of nodes for auto-scaling"
-}
-
-variable "user_node_pool_vm_size" {
-  type        = string
-  default     = "Standard_D2s_v3"
-  description = "The size of each VM in the Agent Pool (e.g. Standard_F1). Changing this forces a new resource to be created."
-}
-
-variable "user_node_pool_os_disk_size" {
-  type        = string
-  default     = "120"
-  description = "The Agent Operating System disk size in GB. Changing this forces a new resource to be created."
 }
 
 variable "sku_tier" {

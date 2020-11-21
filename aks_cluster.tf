@@ -100,6 +100,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks_cluster_user_pool" {
     availability_zones      = each.value.zones
     enable_auto_scaling     = each.value.cluster_auto_scaling 
     os_disk_size_gb         = each.value.cluster_os_disk_size
+    os_type                 = each.value.node_os
     min_count               = each.value.cluster_auto_scaling_min_count
     max_count               = each.value.cluster_auto_scaling_max_count
     max_pods                = var.max_pods_per_node

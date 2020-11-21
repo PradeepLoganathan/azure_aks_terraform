@@ -82,14 +82,27 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "aks_cluster_user_pool" {
-        name                    = "user"
-        mode                    = "User"
-        orchestrator_version    = var.kubernetes_version
-        kubernetes_cluster_id   = azurerm_kubernetes_cluster.aks_cluster.id
-        enable_auto_scaling     = true
-        vm_size                 = var.user_node_pool_vm_size
-        os_disk_size_gb         = var.user_node_pool_os_disk_size
-        min_count               = var.user_node_pool_min_count
-        max_count               = var.user_node_pool_max_count
-        max_pods                = var.max_pods_per_node
+    
+    lifecycle {
+    ignore_changes = [
+      node_count
+    ]
+  }
+    
+  for_each = var.additional_node_pools
+    
+    kubernetes_cluster_id   = azurerm_kubernetes_cluster.aks_cluster.id
+    name                    = each.value.node_os == "Windows" ? substr(each.key, 0, 6) : substr(each.key, 0, 12)
+    orchestrator_version    = var.kubernetes_version
+    mode                    = "User"
+    node_count              = each.value.node_count
+    vm_size                 = each.value.vm_size
+    availability_zones      = each.value.zones
+    enable_auto_scaling     = each.value.cluster_auto_scaling 
+    os_disk_size_gb         = each.value.cluster_os_disk_size
+    min_count               = each.value.cluster_auto_scaling_min_count
+    max_count               = each.value.cluster_auto_scaling_max_count
+    max_pods                = var.max_pods_per_node
+    node_labels           ` = each.value.labels
+    node_taints             = each.value.taints
 }

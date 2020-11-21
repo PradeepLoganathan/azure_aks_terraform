@@ -7,6 +7,12 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     node_resource_group             = "${var.resource_prefix}-worker"
     private_cluster_enabled         = false
     sku_tier                        = var.sku_tier
+    
+    lifecycle {
+        ignore_changes = [
+        default_node_pool[0].node_count
+        ]
+    }
 
     network_profile {
         network_plugin     = "azure"
@@ -61,15 +67,15 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     addon_profile {
         # PREVIEWFEATURE: AzurePolicy
         azure_policy {
-        enabled = true
+        enabled = var.addons.azure_policy
         }
 
         kube_dashboard {
-        enabled = false
+        enabled = var.addons.kubernetes_dashboard
         }
 
         oms_agent {
-        enabled                    = true
+        enabled                    = var.addons.oms_agent
         log_analytics_workspace_id = var.log_analytics_workspace_resource_id
         }
     }

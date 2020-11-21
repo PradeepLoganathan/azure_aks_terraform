@@ -72,6 +72,7 @@ variable "additional_node_pools" {
     cluster_auto_scaling           = bool
     cluster_auto_scaling_min_count = number
     cluster_auto_scaling_max_count = number
+    cluster_os_disk_size           = number
   }))
 }
 

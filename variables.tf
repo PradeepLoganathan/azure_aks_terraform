@@ -119,3 +119,11 @@ variable "docker_cidr" {
   description = "IP address (in CIDR notation) used as the Docker bridge IP address on nodes. Changing this forces a new resource to be created."
 }
 
+variable "addons" {
+  description = "Defines which addons will be activated."
+  type = object({
+    oms_agent            = bool
+    kubernetes_dashboard = bool
+    azure_policy         = bool
+  })
+}

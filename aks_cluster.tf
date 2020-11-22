@@ -76,7 +76,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 
         oms_agent {
         enabled                    = var.addons.oms_agent
-        log_analytics_workspace_id = var.log_analytics_workspace_resource_id
+        log_analytics_workspace_id = azurerm_log_analytics_workspace.clusterinsightsworkspace.id
         }
     }
 }
@@ -104,6 +104,6 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks_cluster_user_pool" {
     min_count               = each.value.cluster_auto_scaling_min_count
     max_count               = each.value.cluster_auto_scaling_max_count
     max_pods                = var.max_pods_per_node
-    node_labels           ` = each.value.labels
+    node_labels             = each.value.labels
     node_taints             = each.value.taints
 }

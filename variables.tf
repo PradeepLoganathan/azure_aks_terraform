@@ -87,11 +87,6 @@ variable "sku_tier" {
   description = "The SKU Tier that should be used for this Kubernetes Cluster. Possible values are Free and Paid (which includes the Uptime SLA)"
 }
 
-variable "vnet_subnet_id" {
-  description = "Resource id of the Virtual Network subnet"
-  type        = string
-}
-
 variable "service_cidr" {
   type        = string
   default     = "100.64.0.0/16"
@@ -117,4 +112,5 @@ variable "addons" {
     kubernetes_dashboard = bool
     azure_policy         = bool
   })
+  default = { dashboard = true, oms_agent = false, oms_agent_workspace_id = null, policy = true }
 }

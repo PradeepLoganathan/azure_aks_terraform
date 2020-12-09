@@ -35,3 +35,8 @@ output "cluster_name" {
   value       = azurerm_kubernetes_cluster.aks_cluster.name
   description = "Name of the Kubernetes Cluster"
 }
+
+output "cluster_kube_config" {
+  value = azurerm_kubernetes_cluster.aks_cluster.kube_config_raw
+  description = "config for the Kubernetes Cluster"
+}

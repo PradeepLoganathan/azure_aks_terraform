@@ -117,6 +117,6 @@ variable "addons" {
   default = { 
     oms_agent = true,
     kubernetes_dashboard = true,
-    policy = true 
+    azure_policy = true 
     }
 }

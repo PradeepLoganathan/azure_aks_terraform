@@ -1,11 +1,13 @@
 variable "resource_prefix" {
   type        = string
   description = "(Required) Prefix given to all resources within the module."
+  default     = "K8s"
 }
 
 variable "location" {
   type        = string
   description = "(Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created."
+  default     = "australiaeast"
 }
 
 variable "kubernetes_version" {
@@ -112,5 +114,9 @@ variable "addons" {
     kubernetes_dashboard = bool
     azure_policy         = bool
   })
-  default = { dashboard = true, oms_agent = false, oms_agent_workspace_id = null, policy = true }
+  default = { 
+    oms_agent = true,
+    kubernetes_dashboard = true,
+    policy = true 
+    }
 }

@@ -4,10 +4,11 @@ resource "random_id" "log_analytics_workspace_name_suffix" {
 
 
 resource "azurerm_log_analytics_workspace" "clusterinsightsworkspace" {
-  name                = "${var.log_analytics_workspace_name}-${random_id.log_analytics_workspace_name_suffix}"
+  name                = "${var.log_analytics_workspace_name}-${random_id.log_analytics_workspace_name_suffix.hex}"
   location            = azurerm_resource_group.aks_res_grp.location
   resource_group_name = azurerm_resource_group.aks_res_grp.name
   retention_in_days   = 30
+  sku                 = "PerGB2018"
 
    lifecycle {
         ignore_changes = [

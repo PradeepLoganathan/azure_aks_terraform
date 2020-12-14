@@ -10,7 +10,7 @@ resource "azurerm_subnet" "aks_subnet" {
     name                = "${var.resource_prefix}-subnet"
     resource_group_name = azurerm_resource_group.aks_res_grp.name
     virtual_network_name= azurerm_virtual_network.aks_vnet.name
-    address_prefixes    = ["10.1.0.0/24"]
+    address_prefixes    = ["10.1.0.0/16"]
 }
 
 
@@ -25,6 +25,12 @@ resource "azurerm_route_table" "aks_route_table" {
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "10.10.1.1"
   }
+
+  route {
+        name           = "default-route"
+        address_prefix = "0.0.0.0/0"
+        next_hop_type  = "VirtualNetworkGateway"
+    }
 }
 resource "azurerm_subnet_route_table_association" "cluster-01" {
   subnet_id      = azurerm_subnet.aks_subnet.id

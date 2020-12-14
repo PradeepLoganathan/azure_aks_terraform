@@ -12,7 +12,7 @@ variable "location" {
 
 variable "kubernetes_version" {
   type        = string
-  default     = "1.16.8"
+  default     = "1.19.3"
   description = "Version of Kubernetes specified when creating the AKS managed cluster. If not specified, the latest recommended version will be used at provisioning time (but won't auto-upgrade)."
 }
 
@@ -50,13 +50,13 @@ variable "system_node_pool" {
   })
 
   default = {
-      node_count                        = 2
+      node_count                        = 1
       vm_size                           = "Standard_D2s_v3"
-      cluster_auto_scaling_min_count    = 3
-      cluster_auto_scaling_max_count    = 5
+      cluster_auto_scaling_min_count    = 1
+      cluster_auto_scaling_max_count    = 2
       cluster_auto_scaling              = true
       labels                            = {}
-      name                              = "system-node-pool"
+      name                              = "systempool"
       taints                            = ["CriticalAddonsOnly=true:NoSchedule"]
       zones                             = ["1", "2"]
   }
@@ -65,17 +65,43 @@ variable "system_node_pool" {
 variable "additional_node_pools" {
   description = "The map object to configure one or several additional node pools with number of worker nodes, worker node VM size and Availability Zones."
   type = map(object({
+   
     node_count                     = number
     vm_size                        = string
     zones                          = list(string)
-    labels                         = map(string)
+    
     taints                         = list(string)
     node_os                        = string
     cluster_auto_scaling           = bool
     cluster_auto_scaling_min_count = number
     cluster_auto_scaling_max_count = number
-    cluster_os_disk_size           = number
+    
   }))
+
+  default = {
+     pool2 = {
+      node_count = 1
+      vm_size    = "Standard_D4_v3"
+      zones      = ["1", "2"]
+      node_os    = "Linux"
+      taints = [
+        "kubernetes.io/os=windows:NoSchedule"
+      ]
+      cluster_auto_scaling           = false
+      cluster_auto_scaling_min_count = null
+      cluster_auto_scaling_max_count = null
+    }
+    pool3 = {
+      node_count                     = 1
+      vm_size                        = "Standard_D4_v3"
+      zones                          = ["1", "2", "3"]
+      node_os                        = "Linux"
+      taints                         = null
+      cluster_auto_scaling           = true
+      cluster_auto_scaling_min_count = 1
+      cluster_auto_scaling_max_count = 3
+    }
+  }
 }
 
 variable log_analytics_workspace_name {

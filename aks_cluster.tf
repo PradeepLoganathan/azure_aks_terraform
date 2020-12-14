@@ -14,15 +14,6 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
         ]
     }
 
-    network_profile {
-        network_plugin     = "azure"
-        network_policy     = "azure"
-        service_cidr       = var.service_cidr
-        dns_service_ip     = var.dns_service_ip
-        docker_bridge_cidr = var.docker_cidr
-        outbound_type      = "userDefinedRouting"
-    }
-
     #create system node pool
     default_node_pool {
         name                  = substr(var.system_node_pool.name, 0, 12)
@@ -34,7 +25,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
         max_pods              = 250
         os_disk_size_gb       = 128
         node_labels           = var.system_node_pool.labels
-        node_taints           = var.system_node_pool.taints
+        
         enable_auto_scaling   = var.system_node_pool.cluster_auto_scaling
         min_count             = var.system_node_pool.cluster_auto_scaling_min_count
         max_count             = var.system_node_pool.cluster_auto_scaling_max_count
@@ -44,7 +35,9 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     }
 
     network_profile {
+        # Using azure-cni for advanced networking
         network_plugin     = "azure"
+        # The network policy to be used with Azure CNI.
         network_policy     = "azure"
         service_cidr       = var.service_cidr
         dns_service_ip     = var.dns_service_ip
@@ -70,9 +63,9 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
         enabled = var.addons.azure_policy
         }
 
-        kube_dashboard {
-        enabled = var.addons.kubernetes_dashboard
-        }
+        # kube_dashboard {
+        # enabled = var.addons.kubernetes_dashboard
+        # }
 
         oms_agent {
         enabled                    = var.addons.oms_agent
@@ -99,11 +92,11 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks_cluster_user_pool" {
     vm_size                 = each.value.vm_size
     availability_zones      = each.value.zones
     enable_auto_scaling     = each.value.cluster_auto_scaling 
-    os_disk_size_gb         = each.value.cluster_os_disk_size
+    
     os_type                 = each.value.node_os
     min_count               = each.value.cluster_auto_scaling_min_count
     max_count               = each.value.cluster_auto_scaling_max_count
     max_pods                = var.max_pods_per_node
-    node_labels             = each.value.labels
+    
     node_taints             = each.value.taints
 }
